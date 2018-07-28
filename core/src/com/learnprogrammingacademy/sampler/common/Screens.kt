@@ -81,7 +81,7 @@ class LevelScreen : BaseScreen() {
     }
 
     private fun collect(starfish: Starfish) = mainStage.addActor(Whirlpool(0f, 0f).apply {
-        centerAtActor(starfish.disappear())
+        centerAtActor(starfish.collect())
     })
 
     private fun setWinState() {

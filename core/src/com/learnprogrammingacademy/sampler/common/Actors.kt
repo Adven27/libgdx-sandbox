@@ -59,7 +59,7 @@ class Turtle(x: Float, y: Float) : BaseActor(x, y) {
 }
 
 class Starfish(x: Float, y: Float, var collected: Boolean = false) : BaseActor(x, y, 8) {
-    fun disappear() = this.apply {
+    fun collect() = this.apply {
         collected = true
         clearActions()
         actions(Actions.fadeOut(1f), Actions.after(Actions.removeActor()))
