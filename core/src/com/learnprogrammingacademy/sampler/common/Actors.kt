@@ -5,6 +5,9 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.learnprogrammingacademy.sampler.utils.pressed
 
 class Turtle(x: Float, y: Float) : BaseActor(x, y) {
+    var alive: Boolean = true
+        private set
+
     constructor(position: Pair<Float, Float>) : this(position.first, position.second)
 
     init {
@@ -29,10 +32,12 @@ class Turtle(x: Float, y: Float) : BaseActor(x, y) {
     override fun act(dt: Float) {
         super.act(dt)
 
-        if (Keys.LEFT.pressed()) accelerateAtAngle(180f)
-        if (Keys.RIGHT.pressed()) accelerateAtAngle(0f)
-        if (Keys.UP.pressed()) accelerateAtAngle(90f)
-        if (Keys.DOWN.pressed()) accelerateAtAngle(270f)
+        if (alive) {
+            if (Keys.LEFT.pressed()) accelerateAtAngle(180f)
+            if (Keys.RIGHT.pressed()) accelerateAtAngle(0f)
+            if (Keys.UP.pressed()) accelerateAtAngle(90f)
+            if (Keys.DOWN.pressed()) accelerateAtAngle(270f)
+        }
 
         applyPhysics(dt)
 
@@ -46,9 +51,20 @@ class Turtle(x: Float, y: Float) : BaseActor(x, y) {
         alignCamera()
     }
 
+    fun die() {
+        alive = false
+        clearActions()
+        actions(Actions.fadeOut(1f))
+    }
 }
 
 class Starfish(x: Float, y: Float, var collected: Boolean = false) : BaseActor(x, y, 8) {
+    fun disappear() = this.apply {
+        collected = true
+        clearActions()
+        actions(Actions.fadeOut(1f), Actions.after(Actions.removeActor()))
+    }
+
     constructor(position: Pair<Float, Float>) : this(position.first, position.second)
 
     init {
@@ -63,6 +79,14 @@ class Rock(x: Float, y: Float) : BaseActor(x, y, 8) {
 
     init {
         loadTexture(ROCK)
+    }
+}
+
+class Shark(x: Float, y: Float) : BaseActor(x, y, 8) {
+    constructor(position: Pair<Float, Float>) : this(position.first, position.second)
+
+    init {
+        loadTexture(SHARK)
     }
 }
 

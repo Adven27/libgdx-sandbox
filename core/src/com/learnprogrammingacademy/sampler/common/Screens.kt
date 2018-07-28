@@ -2,8 +2,6 @@ package com.learnprogrammingacademy.sampler.common
 
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.scenes.scene2d.Action
-import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.actions.Actions.*
 import com.badlogic.gdx.scenes.scene2d.ui.Label
@@ -70,27 +68,26 @@ class LevelScreen : BaseScreen() {
 
         applyPhysic()
 
-        if (win()) {
-            setWinState()
+        when {
+            win() -> setWinState()
+            lose() -> setLoseState()
         }
         stat()
     }
 
     private fun applyPhysic() {
+        if (mainStage.actors(Shark::class).any(turtle::overlaps)) turtle.die()
         mainStage.actors(Rock::class).forEach { turtle.preventOverlap(it) }
         mainStage.actors(Starfish::class).filter { !it.collected && turtle.overlaps(it) }.forEach { collect(it) }
     }
 
     private fun collect(starfish: Starfish) = mainStage.addActor(Whirlpool(0f, 0f).apply {
-        centerAtActor(starfish.apply {
-            collected = true
-            clearActions()
-            actions(fadeOut(1f), after(removeActor()))
-        })
+        centerAtActor(starfish.disappear())
     })
 
     private fun setWinState() {
         win = true
+        play = false
         uiStage.addActor(BaseActor(0f, 0f).apply {
             loadTexture(MSG_WIN)
             centerAtPosition(400f, 300f)
@@ -100,12 +97,27 @@ class LevelScreen : BaseScreen() {
         })
     }
 
-    private fun win() = !win && play && mainStage.none(Starfish::class)
+    private fun setLoseState() {
+        win = false
+        play = false
+        uiStage.addActor(BaseActor(0f, 0f).apply {
+            loadTexture(MSG_GAME_OVER)
+            centerAtPosition(400f, 300f)
+            setOpacity(0f)
+            actions(delay(1f), after(fadeIn(1f)))
+            name = "MSG_GAME_OVER"
+        })
+    }
+
+    private fun lose() = play && !turtle.alive
+    private fun win() = play && mainStage.none(Starfish::class)
 
     private fun stat() = statLabel.setText(
         """
+        |T: ${turtle.alive}
         |R: ${mainStage.count(Rock::class)}
-        |S: ${mainStage.count(Starfish::class)}
+        |St: ${mainStage.count(Starfish::class)}
+        |Sh: ${mainStage.count(Shark::class)}
         |AQ: $actors
         |MSA: ${mainStage.actors}
         |USA: ${uiStage.actors.map { it.name }}
@@ -118,6 +130,7 @@ class LevelScreen : BaseScreen() {
             stage.addActor(
                 when (actor) {
                     Rock::class -> Rock(position)
+                    Shark::class -> Shark(position)
                     Turtle::class -> Turtle(position)
                     Starfish::class -> Starfish(position)
                     else -> throw UnsupportedOperationException("${poll().first}")
@@ -125,6 +138,4 @@ class LevelScreen : BaseScreen() {
             )
         }
     }
-
-    private fun Actor.actions(vararg actions: Action) = actions.forEach { addAction(it) }
 }

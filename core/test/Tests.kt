@@ -3,10 +3,7 @@ import com.badlogic.gdx.Gdx.input
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.backends.headless.mock.input.MockInput
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication
-import com.learnprogrammingacademy.sampler.common.LevelScreen
-import com.learnprogrammingacademy.sampler.common.Rock
-import com.learnprogrammingacademy.sampler.common.Screens
-import com.learnprogrammingacademy.sampler.common.Starfish
+import com.learnprogrammingacademy.sampler.common.*
 import com.learnprogrammingacademy.sampler.samples.StarfishGame
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
@@ -45,14 +42,14 @@ class Test {
 
     @Test fun `WHEN touch shark THEN game over`() {
         with(sut) {
-            actors += listOf(Rock::class to (100f to 150f), Starfish::class to (100f to 100f))
+            actors += listOf(Shark::class to (150f to 50f), Starfish::class to (150f to 300f))
             play = true
         }
 
         Input.Keys.RIGHT.press()
 
-        Waiter().wait(sut.turtle) { x > 250 }
-        Waiter().wait(sut.uiStage) { actors.size == 1 }
+        Waiter().wait(sut.turtle) { !alive }
+        Waiter().wait(sut.uiStage) { actors.size == 2 }
     }
 
     companion object {

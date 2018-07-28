@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.*
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector
+import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.learnprogrammingacademy.sampler.utils.GdxArray
@@ -54,7 +55,6 @@ open class BaseActor(x: Float, y: Float, boundarySides: Int = 0) : Actor() {
      * Set the speed of movement (in pixels/second) in current direction.
      * If current speed is zero (direction is undefined), direction will be set to 0 degrees.
      *
-     * @param speed of movement (pixels/second)
      */
     var speed
         get() = velocityVec.len()
@@ -78,7 +78,6 @@ open class BaseActor(x: Float, y: Float, boundarySides: Int = 0) : Actor() {
      * Sets the angle of motion (in degrees).
      * If current speed is zero, this will have no effect.
      *
-     * @param angle of motion (degrees)
      */
     var motionAngle
         get() = velocityVec.angle()
@@ -87,7 +86,7 @@ open class BaseActor(x: Float, y: Float, boundarySides: Int = 0) : Actor() {
         }
 
     init {
-        setPosition(x, y)
+        this.setPosition(x, y)
         if (boundarySides > 0) setBoundaryPolygon(boundarySides)
         // initialize animation data
         elapsedTime = 0f
@@ -492,3 +491,5 @@ internal inline fun <reified T : BaseActor> Stage.actors(kClass: KClass<T>) =
  */
 internal fun Stage.count(kClass: KClass<out BaseActor>) = actors.count { a -> kClass.java.isInstance(a) }
 internal fun Stage.none(kClass: KClass<out BaseActor>) = actors.none { a -> kClass.java.isInstance(a) }
+
+internal fun Actor.actions(vararg actions: Action) = actions.forEach { addAction(it) }
