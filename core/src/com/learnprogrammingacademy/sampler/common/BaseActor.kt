@@ -490,6 +490,21 @@ internal inline fun <reified T : BaseActor> Stage.actors(kClass: KClass<T>) =
  * @return number of instances of the class
  */
 internal fun Stage.count(kClass: KClass<out BaseActor>) = actors.count { a -> kClass.java.isInstance(a) }
+
 internal fun Stage.none(kClass: KClass<out BaseActor>) = actors.none { a -> kClass.java.isInstance(a) }
+
+internal inline fun <reified T : BaseActor> Stage.overlap(
+    kClass: KClass<T>,
+    a: BaseActor,
+    action: (BaseActor) -> Unit
+) {
+    actors(kClass).firstOrNull(a::overlaps)?.let(action)
+}
+
+internal inline fun <reified T : BaseActor> Stage.solid(kClass: KClass<T>, a: BaseActor) =
+    actors(kClass).forEach { a.preventOverlap(it) }
+
+internal inline fun Stage.collect(kClass: KClass<Starfish>, a: BaseActor, action: (Starfish) -> Unit) =
+    actors(kClass).filter { !it.collected && a.overlaps(it) }.forEach { action(it) }
 
 internal fun Actor.actions(vararg actions: Action) = actions.forEach { addAction(it) }

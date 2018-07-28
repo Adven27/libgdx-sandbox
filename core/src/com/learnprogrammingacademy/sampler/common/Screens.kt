@@ -66,7 +66,7 @@ class LevelScreen : BaseScreen() {
     override fun update(dt: Float) {
         actors.populate(mainStage)
 
-        applyPhysic()
+        mainStage.applyPhysics()
 
         when {
             win() -> setWinState()
@@ -75,10 +75,10 @@ class LevelScreen : BaseScreen() {
         stat()
     }
 
-    private fun applyPhysic() {
-        if (mainStage.actors(Shark::class).any(turtle::overlaps)) turtle.die()
-        mainStage.actors(Rock::class).forEach { turtle.preventOverlap(it) }
-        mainStage.actors(Starfish::class).filter { !it.collected && turtle.overlaps(it) }.forEach { collect(it) }
+    private fun Stage.applyPhysics() {
+        collect(Starfish::class, turtle) { collect(it) }
+        overlap(Shark::class, turtle) { turtle.die() }
+        solid(Rock::class, turtle)
     }
 
     private fun collect(starfish: Starfish) = mainStage.addActor(Whirlpool(0f, 0f).apply {
