@@ -90,6 +90,19 @@ class Shark(x: Float, y: Float) : BaseActor(x, y, 8) {
     }
 }
 
+sealed class Messages(messages: String) : BaseActor(0f, 0f, 8) {
+    init {
+        loadTexture(messages)
+        centerAtPosition(400f, 300f)
+        setOpacity(0f)
+        actions(Actions.delay(1f), Actions.after(Actions.fadeIn(1f)))
+        name = messages
+    }
+}
+
+class Win : Messages(MSG_WIN)
+class Lose : Messages(MSG_GAME_OVER)
+
 class Whirlpool(x: Float, y: Float) : BaseActor(x, y) {
     constructor(position: Pair<Float, Float>) : this(position.first, position.second)
 

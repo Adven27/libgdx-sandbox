@@ -3,7 +3,6 @@ package com.learnprogrammingacademy.sampler.common
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.actions.Actions.*
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.learnprogrammingacademy.sampler.samples.StarfishGame
 import com.learnprogrammingacademy.sampler.utils.pressed
@@ -88,25 +87,13 @@ class LevelScreen : BaseScreen() {
     private fun setWinState() {
         win = true
         play = false
-        uiStage.addActor(BaseActor(0f, 0f).apply {
-            loadTexture(MSG_WIN)
-            centerAtPosition(400f, 300f)
-            setOpacity(0f)
-            actions(delay(1f), after(fadeIn(1f)))
-            name = "MSG_WIN"
-        })
+        uiStage.addActor(Win())
     }
 
     private fun setLoseState() {
         win = false
         play = false
-        uiStage.addActor(BaseActor(0f, 0f).apply {
-            loadTexture(MSG_GAME_OVER)
-            centerAtPosition(400f, 300f)
-            setOpacity(0f)
-            actions(delay(1f), after(fadeIn(1f)))
-            name = "MSG_GAME_OVER"
-        })
+        uiStage.addActor(Lose())
     }
 
     private fun lose() = play && !turtle.alive
